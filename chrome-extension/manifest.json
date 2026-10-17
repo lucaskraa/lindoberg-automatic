@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "Alura Auto 4.0",
+  "version": "4.0.0",
+  "description": "Automação e acompanhamento inteligente de estudos para Alura integrado ao painel de controle.",
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.alura.com.br/*",
+    "*://cursos.alura.com.br/*",
+    "*://*.github.io/*",
+    "*://localhost/*",
+    "*://127.0.0.1/*",
+    "*://*.run.app/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Alura Auto 4.0"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.alura.com.br/*",
+        "*://cursos.alura.com.br/*"
+      ],
+      "js": ["alura.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "*://*.github.io/*",
+        "*://localhost/*",
+        "*://127.0.0.1/*",
+        "*://*.run.app/*",
+        "https://*/*"
+      ],
+      "js": ["bridge.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["popup.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

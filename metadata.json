@@ -1,0 +1,8 @@
+{
+  "name": "Alura Auto 4.0",
+  "description": "Painel de controle e automação de estudos para a Alura integrado à extensão Chrome Manifest V3.",
+  "version": "4.0.0",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

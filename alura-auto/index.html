@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alura Auto 4.0 - Painel de Controle e Automação</title>
+  <meta name="description" content="Painel de controle e automação de estudos para a Alura integrado à extensão Chrome Manifest V3.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Bar Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">ALURA AUTO</h1>
+          <span class="brand-subtitle">Automação Inteligente de Estudos • Versão 4.0</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="btnOpenModalInstall" class="btn btn-outline" title="Instruções de Instalação">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          INSTALAR EXTENSÃO
+        </button>
+        <button id="btnToggleSimulator" class="btn btn-ghost" title="Alternar Modo Simulador / Teste">
+          <span id="simulatorBadge" class="sim-badge">Modo Real</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <main class="dashboard-grid">
+      <!-- Status Indicators Card -->
+      <section class="card status-panel">
+        <h2 class="card-title">STATUS DO SISTEMA</h2>
+
+        <div class="status-grid">
+          <div class="status-box">
+            <span class="status-box-label">ESTADO DA EXTENSÃO</span>
+            <div id="extStatusBadge" class="status-tag status-danger">
+              <span class="dot"></span>
+              <span id="extStatusText">EXTENSÃO NÃO INSTALADA</span>
+            </div>
+            <p id="extStatusHelp" class="status-hint">Aguardando detecção do Chrome...</p>
+          </div>
+
+          <div class="status-box">
+            <span class="status-box-label">ESTADO DA ALURA</span>
+            <div id="aluraStatusBadge" class="status-tag status-neutral">
+              <span class="dot"></span>
+              <span id="aluraStatusText">PROCURANDO ALURA</span>
+            </div>
+            <p id="aluraStatusHelp" class="status-hint">Verificando abas no navegador...</p>
+          </div>
+
+          <div class="status-box">
+            <span class="status-box-label">ESTADO DA AUTOMAÇÃO</span>
+            <div id="autoStatusBadge" class="status-tag status-muted">
+              <span class="dot"></span>
+              <span id="autoStatusText">PARADO</span>
+            </div>
+            <p id="autoStatusHelp" class="status-hint">Pronto para iniciar</p>
+          </div>
+        </div>
+
+        <!-- Main Action Buttons -->
+        <div class="action-buttons-bar">
+          <button id="btnConnect" class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+            </svg>
+            CONECTAR
+          </button>
+
+          <button id="btnStart" class="btn btn-primary" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            COMEÇAR
+          </button>
+
+          <button id="btnPause" class="btn btn-warning" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            PAUSAR
+          </button>
+        </div>
+      </section>
+
+      <!-- Active Lesson & Video Telemetry -->
+      <section class="card lesson-panel">
+        <div class="card-header-flex">
+          <h2 class="card-title">AULA EM ANDAMENTO</h2>
+          <span id="syncIndicator" class="sync-status">Última comunicação: <em>Aguardando</em></span>
+        </div>
+
+        <div class="lesson-meta-box">
+          <div class="meta-field">
+            <span class="meta-label">CURSO IDENTIFICADO:</span>
+            <div id="courseTitle" class="meta-value">Nenhum curso conectado no momento</div>
+          </div>
+
+          <div class="meta-field">
+            <span class="meta-label">AULA ATUAL:</span>
+            <div id="lessonTitle" class="meta-value highlight">Nenhuma aula em reprodução</div>
+          </div>
+        </div>
+
+        <!-- Video Player Monitoring Widget -->
+        <div class="video-monitor-box">
+          <div class="video-monitor-header">
+            <span class="monitor-label">ESTADO DO VÍDEO:</span>
+            <span id="videoStateBadge" class="video-badge badge-idle">NÃO DETECTADO</span>
+          </div>
+
+          <div class="video-progress-wrapper">
+            <div class="progress-bar-bg">
+              <div id="videoProgressBar" class="progress-bar-fill" style="width: 0%;"></div>
+            </div>
+            <div class="time-display">
+              <span id="videoCurrentTime">00:00</span>
+              <span id="videoDuration">00:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error & Notice Alerts -->
+        <div id="errorMessageBanner" class="alert-banner alert-hidden">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span id="errorMessageText">Mensagem informativa</span>
+          <button id="btnCloseAlert" class="btn-close-alert">&times;</button>
+        </div>
+      </section>
+
+      <!-- Activities & Exercises Assistant Card -->
+      <section id="activityCard" class="card activity-panel card-hidden">
+        <div class="card-header-flex">
+          <div class="activity-title-group">
+            <span class="activity-icon">📝</span>
+            <h2 class="card-title">ATIVIDADE / EXERCÍCIO DETECTADO</h2>
+          </div>
+          <span class="badge-badge-info">Acompanhamento Ético</span>
+        </div>
+
+        <div class="activity-content">
+          <h3 id="activityPrompt" class="activity-prompt">Título do exercício...</h3>
+          <p id="activityInstructions" class="activity-instructions">O Alura Auto identificou uma atividade. Você pode resolvê-la diretamente na Alura ou usar o assistente de explicação abaixo.</p>
+
+          <div id="activityOptionsContainer" class="activity-options-list"></div>
+
+          <div class="activity-actions">
+            <button id="btnExplainActivity" class="btn btn-secondary btn-sm">
+              💡 Ver Dica de Estudo
+            </button>
+            <button id="btnConfirmAdvanceActivity" class="btn btn-primary btn-sm">
+              Confirmar e Avançar Aula
+            </button>
+          </div>
+          <div id="activityExplanationBox" class="explanation-box hidden"></div>
+        </div>
+      </section>
+
+      <!-- Interactive Simulator & Testing Lab (Integrated) -->
+      <section class="card simulator-panel">
+        <div class="card-header-flex">
+          <h2 class="card-title">LABORATÓRIO DE TESTES & SIMULADOR ALURA</h2>
+          <span class="badge-pill">Verificação e Diagnóstico</span>
+        </div>
+        <p class="section-desc">
+          Ambiente integrado para validar o handshake, monitor de vídeo, transição de estados e detecção de atividades diretamente nesta interface sem depender de abas externas:
+        </p>
+
+        <div class="simulator-controls">
+          <button id="btnSimulateExtension" class="btn btn-sm btn-outline">Simular Extensão Instalada</button>
+          <button id="btnSimulateAluraTab" class="btn btn-sm btn-outline">Simular Aba Alura Aberta</button>
+          <button id="btnSimulatePlayVideo" class="btn btn-sm btn-outline">Simular Vídeo Tocando</button>
+          <button id="btnSimulateVideoEnd" class="btn btn-sm btn-outline">Simular Fim de Vídeo</button>
+          <button id="btnSimulateExercise" class="btn btn-sm btn-outline">Simular Exercício</button>
+          <button id="btnRunSuiteTests" class="btn btn-sm btn-secondary">Executar Testes 1 a 8</button>
+        </div>
+
+        <!-- Test Results Output -->
+        <div id="testSuiteReport" class="test-report-box hidden">
+          <div class="test-report-header">
+            <h4>RELATÓRIO DOS TESTES AUTOMATIZADOS (1 a 8)</h4>
+            <span id="testSummaryBadge" class="badge-test-pass">8 / 8 Aprovados</span>
+          </div>
+          <ul id="testResultsList" class="test-results-list"></ul>
+        </div>
+      </section>
+
+      <!-- Communication Live Logs Console -->
+      <section class="card logs-panel">
+        <div class="card-header-flex">
+          <h2 class="card-title">REGISTRO DE COMUNICAÇÃO EM TEMPO REAL</h2>
+          <div class="logs-actions">
+            <button id="btnClearLogs" class="btn-text">Limpar</button>
+          </div>
+        </div>
+        <div id="logsConsole" class="logs-console" aria-live="polite">
+          <div class="log-entry log-info">
+            <span class="log-time">[00:00:00]</span>
+            <span class="log-msg">Painel Alura Auto 4.0 iniciado. Buscando extensão e abas...</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal de Instalação Inteligente da Extensão -->
+    <div id="modalInstall" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Instalação Inteligente da Extensão Alura Auto</h3>
+          <button id="btnCloseModal" class="btn-close-modal">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="install-notice">
+            <p><strong>Aviso Importante:</strong> O Google Chrome não permite que sites comuns instalem extensões silenciosamente por questões de segurança. A instalação deve ser realizada via modo desenvolvedor com os arquivos descompactados.</p>
+          </div>
+
+          <ol class="install-steps">
+            <li>
+              <strong>1. Obter a pasta da extensão:</strong>
+              <p>Os arquivos da extensão estão disponíveis na pasta <code>chrome-extension/</code> deste repositório ou você pode baixar todos os arquivos em um único clique:</p>
+              <div class="download-box">
+                <button id="btnDownloadZip" class="btn btn-primary btn-sm">
+                  ⬇️ Baixar Extensão Completa (ZIP)
+                </button>
+                <button id="btnViewManifest" class="btn btn-outline btn-sm">
+                  Ver manifest.json
+                </button>
+              </div>
+            </li>
+            <li>
+              <strong>2. Acessar a tela de Extensões do Chrome:</strong>
+              <p>Abra uma nova aba e digite na barra de endereços: <kbd>chrome://extensions</kbd></p>
+            </li>
+            <li>
+              <strong>3. Ativar o Modo de Desenvolvedor:</strong>
+              <p>No canto superior direito da página do Chrome, ative a chave seletora <strong>Modo do desenvolvedor</strong> (Developer Mode).</p>
+            </li>
+            <li>
+              <strong>4. Carregar a Extensão:</strong>
+              <p>Clique no botão <strong>Carregar sem compactação</strong> (Load unpacked) e selecione a pasta <code>chrome-extension</code> extraída.</p>
+            </li>
+            <li>
+              <strong>5. Confirmação Automática:</strong>
+              <p>Assim que ativada, este painel detectará a extensão automaticamente pelo handshake integrado!</p>
+            </li>
+          </ol>
+
+          <!-- Manifest preview modal toggle -->
+          <div id="manifestViewer" class="manifest-code-block hidden">
+            <pre><code id="manifestCodeText">Carregando manifesto...</code></pre>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button id="btnCheckInstallNow" class="btn btn-secondary">Testar Detecção Agora</button>
+          <button id="btnCloseModalFooter" class="btn btn-primary">Entendido</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Alura Auto 4.0 • Desenvolvido para automação e acompanhamento responsável de estudos.</p>
+      <p class="footer-links">
+        <span>Manifest V3</span> • <span>GitHub Pages Ready</span> • <span>Pure JS &amp; CSS3</span>
+      </p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
